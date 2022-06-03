@@ -1,0 +1,51 @@
+#+title: Manipulate in Python
+#+PROPERTY: header-args:jupyter-python :session manipulate :comments link :mkdirp yes :var figurename=(format "./resources/%s.png" (org-element-property :name (org-element-context))) 
+
+* Line plots
+
+#+NAME: oLQ47U
+#+BEGIN_SRC jupyter-python :exports none
+%matplotlib qt
+%load_ext autoreload
+%autoreload 2
+import matplotlib as mpl
+from matplotlib import pyplot as plt
+import numpy as np
+import pandas as pd
+import scipy as sp
+from rapid_data_scroller import *
+#+END_SRC
+
+#+RESULTS: oLQ47U
+
+Generate some data.
+#+begin_src jupyter-python :exports none
+x=np.linspace(-5,5,200)
+a=np.linspace(1,100,20)
+X,Y,Z=np.meshgrid(x,x,a)
+data=np.sin(X)*np.sin(Z)*np.sinc(X*Y)
+# fg,ax=plt.subplots()
+# ax.imshow(data[:,:,0].T,origin='lower')
+#+end_src
+
+#+RESULTS:
+
+#+begin_src jupyter-python :exports none
+data.shape
+#+end_src
+
+#+RESULTS:
+| 200 | 200 | 20 |
+
+#+NAME:LxQirb
+#+BEGIN_SRC jupyter-python :exports none
+mf = man_lineplot(2,2)
+mf.add_plot([0,0],x,data,['x','z'],plot_ax=0)
+mf.add_plot([1,0],x,data,['y','z'],plot_ax=1)
+mf.add_plot(np.s_[:,1],[x,a],data,['x'],plot_ax=[ 1,2 ],aspect='auto')
+mf.show()
+plt.show()
+#+END_SRC
+
+#+RESULTS: LxQirb
+
