@@ -178,7 +178,7 @@ ifig.add_plot(axpos=[0,0],x=[x,y],data=data,parameters=['x'],plot_ax=[0,1])
 ifig.show()
 #+end_src
 
-
+[[file:ex5.gif]]
 ** Plotting a functions value
 The ~data~ argument can be replaced by a function that returns either a 1d
 array for a line plot or a 2d array for a map plot. 
@@ -191,7 +191,7 @@ by a list containing name,minimum, maximum and step size.
 fc = 250
 x = np.linspace(200, 800, 120)
 def lor(y):
-    return np.abs(1 / ((4*fc ** 2 - (x*y) ** 2 - 1j * x * 20) ** 2))
+    return np.abs(1 / ((4*fc ** 2 - (x+y) ** 2 - 1j * x * 20) ** 2))
 
 ifig = ifigure(1, 1)
 ax = ifig.add_plot(axpos=[0, 0], x=x, data=lor, parameters=[["y",-100,100,1]])
@@ -199,6 +199,7 @@ ax.set_yscale("log")
 ifig.show()
 #+end_src
 
+[[file:ex6a.gif]]
 
 *** In 2d
 ** Complex figure layout
