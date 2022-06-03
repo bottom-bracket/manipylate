@@ -204,7 +204,8 @@ ifig.show()
 *** In 2d
 ** Complex figure layout
 Since the subplot layout creation is based on ~GridSpec~, we can create more
-complicated layouts:
+complicated layouts. We use the handy ~numpy.s_~ to create the exact slices to
+index the ~GridSpec~.
 
 #+begin_src jupyter-python
 x = np.linspace(-5, 5, 200)
@@ -227,3 +228,14 @@ ifig.show()
 
 
 [[file:ex7.gif]]
+* TODOs
+** TODOs
+- Comment and document code
+- 
+** Bugs
+** Missing Features
+
+- add ~convert_param~ method to display physical parameter values (e.g. 0-1μm
+  instead of index values 1-51)
+- 3d plots ?
+- choice for 2d plots (contour)
