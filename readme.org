@@ -4,7 +4,7 @@
 * Line plots
 
 #+NAME: oLQ47U
-#+BEGIN_SRC python :exports none
+#+BEGIN_SRC jupyter-python 
 %matplotlib qt
 %load_ext autoreload
 %autoreload 2
