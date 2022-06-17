@@ -4,7 +4,9 @@
 
 * Description 
 
-The package repository is located at [[https://github.com/bottom-bracket/manipylate]]
+The package repository is located at
+[[https://github.com/bottom-bracket/manipylate]].
+It can also be installed from ~pypi~ with ~pip install manipylate~.
 
 In research we spend some time with plotting data, comparing measurement results
 or testing the influence of parameter changes. Often the most intuitive approach
