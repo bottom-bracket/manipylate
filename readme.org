@@ -1,7 +1,11 @@
 #+title: Manipulate in Python
 #+PROPERTY: header-args:jupyter-python :session manipulate :comments link :mkdirp yes :var figurename=(format "./resources/%s.png" (org-element-property :name (org-element-context))) 
+#+export_file_name: readme_pypi.md
 
 * Description 
+
+The package repository is located at [[https://github.com/bottom-bracket/manipylate]]
+
 In research we spend some time with plotting data, comparing measurement results
 or testing the influence of parameter changes. Often the most intuitive approach
 is by looking at different plots.
