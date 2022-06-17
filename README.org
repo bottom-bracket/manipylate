@@ -65,7 +65,7 @@ ifig.add_plot(axpos=[0,0],x=x,data=data,parameters=['x'],plot_ax=1)
 ifig.show()
 #+end_src
 
-[[file:ex1.gif]]
+[[file:docs/ex1.gif]]
 
 *** In jupyter notebook
 In order to use the ~ipywidget~ widgets, we call ~ifigure~ with the
@@ -76,7 +76,7 @@ ifig.add_plot(axpos=[0,0],x=x,data=data,parameters=['x'],plot_ax=1)
 ifig.show()
 #+end_src
 
-[[file:ex1a.gif]]
+[[file:docs/ex1a.gif]]
 ** Adding a second plot
 
 *** In the same axis
@@ -93,7 +93,7 @@ ifig.show()
 #+end_src
 
 
-[[file:ex2.png]]
+[[file:docs/ex2.png]]
 
 Note that here both plots share the same parameter. In the next example we will
 see that if called with a different name, a new slider will be created.
@@ -130,7 +130,7 @@ ifig.show()
 #+end_src
 
 
-[[file:ex3.gif]]
+[[file:docs/ex3.gif]]
 *** As new axis
 In order to add more than one subplots we adjust the ~ifigure~ creation.
 Here we also use another parameter for the second plot.
@@ -155,7 +155,7 @@ ifig.add_plot(
 ifig.show()
 #+end_src
 
-[[file:ex4.png]]
+[[file:docs/ex4.png]]
 
 
 ** 2d cut trough nd array
@@ -178,7 +178,7 @@ ifig.add_plot(axpos=[0,0],x=[x,y],data=data,parameters=['x'],plot_ax=[0,1])
 ifig.show()
 #+end_src
 
-[[file:ex5.gif]]
+[[file:docs/ex5.gif]]
 ** Plotting a functions value
 The ~data~ argument can be replaced by a function that returns either a 1d
 array for a line plot or a 2d array for a map plot. 
@@ -199,7 +199,7 @@ ax.set_yscale("log")
 ifig.show()
 #+end_src
 
-[[file:ex6a.gif]]
+[[file:docs/ex6a.gif]]
 
 *** In 2d
 ** Complex figure layout
@@ -227,7 +227,7 @@ ifig.show()
 #+end_src
 
 
-[[file:ex7.gif]]
+[[file:docs/ex7.gif]]
 * TODOs
 ** TODOs
 - Comment and document code
