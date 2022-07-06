@@ -132,8 +132,11 @@ class plot2d(object):
 
         if not "origin" in kwargs:
             kwargs["origin"] = "lower"
+        the_map=self.get_map()
+        if len(x)!=the_map.shape[0] or len(y)!=the_map:
+            raise Warning(f'The length of the x,y values does not match. Using equidistant min-max for labeling \nWith ({len(x)},{len(y)})!= {the_map.shape} ')
         self.im = self._ax.imshow(
-            self.get_map(), extent=[x.min(), x.max(), y.min(), y.max()], **kwargs
+            the_map, extent=[x.min(), x.max(), y.min(), y.max()], **kwargs
         )
         self.cb = plt.colorbar(self.im, cax=cax)
 
