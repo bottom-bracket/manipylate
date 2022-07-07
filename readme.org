@@ -26,6 +26,10 @@ sibling /Manipulate/. The tasks I had in mind while writing the tool are:
  
 I also wanted to keep things as simple as possible and be able to use
 /manipylate/ outside ~jupyter~ notebooks.
+** Interactivity
+- Sliders are added automatically
+- Views can be saved with ~Shift + middle mouse click~ in the figure if used in
+  pure ~matplotlib~ mode and by click on the camera button in ~jupyter~
 
 * Examples
 First we get the environment ready (leave out the lines starting with ~%~ for
@@ -234,6 +238,14 @@ ifig.show()
 
 
 [[file:docs/ex7.gif]]
+** Naming and saving views
+The ~ifigure~ class can be called with the ~figurename~ parameter which will
+determine the base name and the extension for individually saved views. The full
+filename is constructed from the ~figurename~ and the current slider names and
+values.
+Slider axes are removed during saving.
+
+
 * TODOs
 ** TODOs
 - Comment and document code

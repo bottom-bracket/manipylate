@@ -35,6 +35,7 @@ import pandas as pd
 import scipy as sp
 from matplotlib.widgets import Slider
 from matplotlib.gridspec import GridSpec, GridSpecFromSubplotSpec
+import pickle
 
 try:
     import ipywidgets as widgets
@@ -215,9 +216,15 @@ class ifigure(object):
 
     Create a collection of subplots arranged with GridSpec that update
     automatically when using the sliders in the bottom part of the figure.
+    Can be called in pure matplotlib with an interactive backend (qt) or in a `jupyter` notebook
+    with the keyword argument 'jupyterwidget=True'.
+    In both cases sliders are draggable with the mouse.
+    The current view of a plot can be saved with `Shift+middle mouse button` in matplotlib and by
+    click on the save button in jupyter mode.
+
     """
 
-    def __init__(self, rows, columns, jupyterwidget=False,**kwargs):
+    def __init__(self, rows, columns, jupyterwidget=False, figurename='figure',**kwargs):
         """
 
         Arguments:
@@ -226,11 +233,13 @@ class ifigure(object):
         - `**kwargs`: keyword arguments:
                     `jupyterwidget` (boolean) -- If true create slider as jupyter widgets instead of
                                                  using matplotlib sliders
+                    `figurename` (string) -- Basename + extension for views saved 
         """
         self._rows = rows
         self._columns = columns
         self._kwargs = kwargs
         self._jw = jupyterwidget
+        self._name = figurename
 
         self.fg = plt.figure(constrained_layout=True,**kwargs)
         if not self._jw:
@@ -248,6 +257,22 @@ class ifigure(object):
         self.plots = []
         self._axpos = []
         self.saxs = []
+        self.shift_is_held = False
+        if not self._jw:
+            cid = self.fg.canvas.mpl_connect('button_release_event', self.onclick)
+            cid = self.fg.canvas.mpl_connect('key_press_event', self.on_key_press)
+            cid = self.fg.canvas.mpl_connect('key_release_event', self.on_key_release)
+        else:
+            button = widgets.Button(
+                description='',
+                disabled=False,
+                button_style='success', # 'success', 'info', 'warning', 'danger' or ''
+                tooltip='Save current view to file',
+                icon='camera' # (FontAwesome names without the `fa-` prefix)
+            )
+            button.on_click(self.on_jwbutton_clicked)
+            self.widgetsr=widgets.VBox([button])
+
 
     def add_plot(self, axpos, x, data, parameters, plot_ax=0, twinx=False, **kwargs):
         """Add a single line plot to one of the figures axis
@@ -374,8 +399,12 @@ class ifigure(object):
                         min=v[1].vmin, max=v[1].vmax, step=v[1].vstep, description=v[0]
                     )
                 sl.observe(self.update, names="value")
-                display(sl)
+                # display(sl)
             v[1].add_slider(sl)
+        if self._jw:
+            self.widgetsl=widgets.VBox([v._slider for v in self.parameters.values()])
+            self.widgets=widgets.HBox([self.widgetsl,self.widgetsr])
+            display(self.widgets)
         # self.fg.subplots_adjust(left=0.15, bottom=0.25)
         plt.show()
 
@@ -385,3 +414,43 @@ class ifigure(object):
         for plot in self.plots:
             plot.plot()
         self.fg.canvas.draw()
+
+    def save_figure(self):
+        '''Create a copy of the figure and remove slider axes, then save
+
+        Copy idea taken from: https://stackoverflow.com/questions/45810557/pyplot-copy-an-axes-content-and-show-it-in-a-new-figure
+        '''
+        fig2 = pickle.loads(pickle.dumps(self.fg))
+        if not self._jw:
+            for i,ax in enumerate(fig2.axes):
+                if i>=len(self.axs.keys()):
+                    fig2.delaxes(ax)
+
+
+        # fig2.show()
+
+        if self._name[-4]=='.':
+            name= self._name[:-4]
+            ext= self._name[-4:]
+        else:
+            name= self._name
+            ext=''
+        filename=name
+        for k,v in self.parameters.items():
+            filename+='_'+v.name+'_'+f'{v.value}'
+        print(filename)
+        fig2.savefig(filename+ext,bbox_inches='tight')
+    
+    def on_key_press(self, event):
+        if event.key == 'shift':
+            self.shift_is_held = True
+
+    def on_key_release(self, event):
+        if event.key == 'shift':
+            self.shift_is_held = False
+    def onclick(self,event):
+        if event.button==mpl.backend_bases.MouseButton.MIDDLE and self.shift_is_held:
+            self.save_figure()
+
+    def on_jwbutton_clicked(self,event):
+        self.save_figure()
