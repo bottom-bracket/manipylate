@@ -1,5 +1,5 @@
 /.ob-jupyter/
-
+tests/tmp/*
 # Created by https://www.toptal.com/developers/gitignore/api/emacs,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=emacs,python
 
@@ -216,3 +216,5 @@ cython_debug/
 #.idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/emacs,python
+
+/src/manipylate/flycheck_manipylate_classes.py
