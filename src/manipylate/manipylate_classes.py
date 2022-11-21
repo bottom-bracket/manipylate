@@ -61,12 +61,14 @@ class lineplot(object):
         """
         self._ax = ax
         self._data = data
+        self._x = x
         self._dimvar = {}
         self._parameters = parameters
         self.fix_lim=fix_lim
         self._kwargs=kwargs
 
         self._datisfun = isfunction(data)
+        self._xisfun = isfunction(x)
 
         if not isfunction(data) and len(data.shape) - 1 != len(parameters):
             raise (Exception("not enough dimension parameters "))
@@ -75,8 +77,16 @@ class lineplot(object):
         for v in parameters:
             self._dimvar[v.name] = v
 
-        (self.line,) = self._ax.plot(x, self.get_line(), **kwargs)
+        (self.line,) = self._ax.plot(self.get_x(), self.get_line(), **kwargs)
 
+    def get_x(self):
+        if self._xisfun:
+            vdict = {}
+            for v in self._parameters:
+                vdict[v.name] = v.value
+            return self._x(**vdict)
+        else:
+            return self._x
     def get_line(self):
         if self._datisfun:
             vdict = {}
@@ -95,7 +105,7 @@ class lineplot(object):
 
     def plot(self):
         if self.vchanged():
-            self.line.set_ydata(self.get_line())
+            self.line.set_data(self.get_x(),self.get_line())
             if self.fix_lim:
                 return
             self._ax.relim()
@@ -131,13 +141,20 @@ class plot2d(object):
         for v in parameters:
             self._dimvar[v.name] = v
 
+        the_map=self.get_map()
+
+        self._kwargs = kwargs.copy()
         if not "origin" in kwargs:
             kwargs["origin"] = "lower"
-        the_map=self.get_map()
+        if 'clim' in kwargs and type(kwargs['clim'])==bool and kwargs['clim']:
+            kwargs['clim']=[np.nanmin(the_map),np.nanmax(the_map)]
+            self._kwargs['clim']=kwargs['clim']
+
+
         if len(x)!=the_map.shape[0] or len(y)!=the_map.shape[1]:
             raise Warning(f'The length of the x,y values does not match. Using equidistant min-max for labeling \nWith ({len(x)},{len(y)})!= {the_map.shape} ')
         self.im = self._ax.imshow(
-            the_map, extent=[x.min(), x.max(), y.min(), y.max()], **kwargs
+            the_map.T, extent=[x.min(), x.max(), y.min(), y.max()],  **kwargs
         )
         self.cb = plt.colorbar(self.im, cax=cax)
 
@@ -155,9 +172,10 @@ class plot2d(object):
     def plot(self):
         if self.vchanged():
             data = self.get_map()
-            self.im.set_data(data)
+            self.im.set_data(data.T)
             self._ax.relim()
-            self.im.set_clim(data.min(), data.max())
+            if not 'clim' in self._kwargs:
+                self.im.set_clim(np.nanmin(data), np.nanmax(data))
             self._ax.autoscale_view()
         return
 
@@ -289,7 +307,13 @@ class ifigure(object):
                      step size (default 1).
         plot_ax (0) -- Axis to cut along. If data is a function returning a 2D array,
                        plot_ax needs to be a list of length 2 in order to create a 2d plot.
-        **kwargs  -- keyword arguments to pass to the plot function
+        **kwargs  -- keyword arguments to pass to the matplotlib plot function
+                The following arguments have an additional role:
+                - In case of 2d plots
+                  clim : colorscale limits (list,tuple,True): If provided, the colorbar will not be updated
+                         when the limits of the displayed data changes. If not, the colorscale is updated
+                         to match the current data. Can be of boolean type to determine the overall limits
+                         automatically so the user has not to provide the precise limits.
 
         Returns:
         ax  -- Matplotlib subplot axis instance where plot is created.
@@ -325,6 +349,7 @@ class ifigure(object):
         ## Bring data in right shape and create list of scan parameters
         ##
 
+        xisfun = isfunction(x)
         datisfun = isfunction(data)
         if not datisfun:
             if is2d:
